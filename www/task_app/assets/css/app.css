@@ -1,0 +1,37 @@
+@import '~bootstrap/dist/css/bootstrap.css';
+
+body {
+    background-color: lightgray;
+}
+
+header {
+    text-align: center;
+    padding: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+}
+
+.white {
+    background-color: white;
+}
+
+.space {
+    padding: 10px;
+}
+
+.round {
+    border-radius: 20px;
+}
+
+.error {
+    border: 2px solid #FF6565;
+}
+
+.error-message {
+    color: #FF6565;
+    padding: 10px 5px;
+    height: 1em;
+}
