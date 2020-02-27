@@ -1,5 +1,4 @@
 <?php
-// src/Controller/LuckyController.php
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +9,8 @@ class DefaultController extends AbstractController
 {
     /**
      * @Route("/", name="_home", methods={"GET"})
+     * @Route("/create", name="_create", methods={"GET"})
+     * @Route("/edit/{id}", name="_edit", methods={"GET"})
      */
     public function number()
     {
