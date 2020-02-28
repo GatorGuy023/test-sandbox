@@ -10,9 +10,10 @@ import * as yup from "yup"
 function Edit(props) {
     const {taskList, setTaskList} = useContext(TaskContext)
     const [showSuccess, setShowSuccess] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(false)
     const {id} = useParams()
 
-    const data = taskList.find(data => data.id === +id)
+    let data = taskList.find(data => data.id === +id)
     
     const schema = yup.object({
         title: yup.string()
@@ -33,22 +34,38 @@ function Edit(props) {
                     // When button submits form and form is in the process of submitting, submit button is disabled
                     setSubmitting(true)
                     
-                    setTaskList((prevList) => {
-                        return taskList.map((data) => {
-                            if (data.id === +id) {
-                                return {
-                                    ...data,
-                                    title: values.title
-                                }
-                            }
+                    data = {
+                        ...data,
+                        title: values.title
+                    };
 
-                            return data
-                        })
+                    fetch(`http://localhost/tasks/${id}`, {
+                        method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+                        mode: 'cors', // no-cors, *cors, same-origin
+                        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
                     })
-                    
-                    // Sets setSubmitting to false after update
-                    setSubmitting(false);
-                    setShowSuccess(true)
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            setTaskList((prevList) => {
+                                return prevList.map((data) => {
+                                    if (data.id === +id) {
+                                        return response.task
+                                    }
+        
+                                    return data
+                                })
+                            })
+                            setShowSuccess(true)
+                            resetForm()
+                        }
+                        setIsDisabled(false)
+                        setSubmitting(false)
+                    })
                 }}
                 initialValues={{
                   title: data.title
@@ -85,7 +102,7 @@ function Edit(props) {
                             ) : null}
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" style={{margin: "5px"}}>Save</Button>
+                        <Button disabled={isDisabled} variant="primary" type="submit" style={{margin: "5px"}}>Save</Button>
                         <Button as={Link} to="/" variant="dark" style={{margin: "5px"}}>Back To Home</Button>
                     </Form>
                 )}

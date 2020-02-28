@@ -1,12 +1,16 @@
-import React, {useState} from "react"
+import React, {useState, useContext} from "react"
+import {TaskContext} from "../Components/TaskContext"
 import {Link} from "react-router-dom"
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
+import Alert from "react-bootstrap/Alert"
 import {Formik} from "formik"
 import * as yup from "yup"
 
 function Create(props) {
     const [showSuccess, setShowSuccess] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(false)
+    const {setTaskList} = useContext(TaskContext)
 
     const schema = yup.object({
         title: yup.string()
@@ -24,13 +28,27 @@ function Create(props) {
                     // When button submits form and form is in the process of submitting, submit button is disabled
                     setSubmitting(true)
                     
-                    setShowSuccess(true)
-
-                    // Resets form after submission is complete
-                    resetForm()
-        
-                    // Sets setSubmitting to false after form is reset
-                    setSubmitting(false)
+                    setIsDisabled(true)
+                    fetch("http://localhost/tasks", {
+                        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                        mode: 'cors', // no-cors, *cors, same-origin
+                        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(values)
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                            if (response.success) {
+                                setTaskList(prevList => [...prevList, response.task])
+                                setShowSuccess(true)
+                                resetForm()
+                            }
+                            setIsDisabled(false)
+                            setSubmitting(false)
+                        }
+                    )
                 }}
                 initialValues={{
                   title: ""
@@ -67,8 +85,8 @@ function Create(props) {
                             ) : null}
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">Save</Button>
-                        <Button as={Link} to="/" variant="dark">Back to Home</Button>
+                        <Button disabled={isDisabled} variant="primary" type="submit" style={{margin: "5px"}}>Save</Button>
+                        <Button as={Link} to="/" variant="dark" style={{margin: "5px"}}>Back to Home</Button>
                     </Form>
                 )}
             </Formik>

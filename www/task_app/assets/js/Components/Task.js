@@ -1,9 +1,10 @@
-import React from "react"
+import React, {useState} from "react"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ButtonGroup from "react-bootstrap/ButtonGroup"
 import {Link} from "react-router-dom"
+import Spinner from "react-bootstrap/Spinner"
 
 function Task(props) {
     return (
@@ -19,7 +20,7 @@ function Task(props) {
             <Col xs={6} md={4}>
                 <ButtonGroup aria-label="Task Actions">
                     <Button as={Link} to={`/edit/${props.id}`} variant="info">Edit</Button>
-                    <Button variant="danger">Delete</Button>
+                    <Button onClick={() => props.deleteTask(props.id)} variant="danger">Delete</Button>
                 </ButtonGroup>
             </Col>
         </Row>
